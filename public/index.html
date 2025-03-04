@@ -1,0 +1,284 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EXE | Sender</title>
+  <link rel="icon" href="https://logo.clearbit.com/sent.com" type="image/png">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <div class="logo-container">
+        <img id="appLogo" src="https://logo.clearbit.com/gmail.com" alt="Email Sender Logo" class="logo">
+        <h1>EXE Sender</h1>
+      </div>
+      <div class="tab-container">
+        <button class="tab-btn active" data-tab="setup-tab">Setup</button>
+        <button class="tab-btn" data-tab="compose-tab">Compose</button>
+        <button class="tab-btn" data-tab="recipients-tab">Recipients</button>
+        <button class="tab-btn" data-tab="sending-tab">Sending</button>
+        <button class="tab-btn" data-tab="stats-tab">Stats</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Setup Tab -->
+      <div id="setup-tab" class="tab-content active">
+        <div class="card">
+          <h2><i class="fas fa-server"></i> SMTP Server Configuration</h2>
+          <div class="smtp-form">
+            <div class="form-group">
+              <label for="smtpHost">SMTP Host</label>
+              <input type="text" id="smtpHost" placeholder="smtp.example.com">
+            </div>
+            <div class="form-group">
+              <label for="smtpPort">SMTP Port</label>
+              <input type="number" id="smtpPort" placeholder="587">
+            </div>
+            <div class="form-group">
+              <label for="smtpUser">SMTP Username</label>
+              <input type="text" id="smtpUser" placeholder="user@example.com">
+            </div>
+            <div class="form-group">
+              <label for="smtpPass">SMTP Password</label>
+              <input type="password" id="smtpPass" placeholder="Your password">
+            </div>
+            <div class="form-group">
+              <label for="smtpSecure">Secure (TLS/SSL)</label>
+              <select id="smtpSecure">
+                <option value="false">No (STARTTLS)</option>
+                <option value="true">Yes (SSL/TLS)</option>
+              </select>
+            </div>
+            <div class="form-buttons">
+              <button id="testSmtp" class="btn secondary">Test Connection</button>
+              <button id="addSmtp" class="btn primary">Add SMTP Server</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><i class="fas fa-random"></i> SMTP Rotation Setup</h2>
+          <div id="smtpServerList" class="smtp-server-list">
+            <div class="empty-state">
+              No SMTP servers configured. Add at least one server above.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compose Tab -->
+      <div id="compose-tab" class="tab-content">
+        <div class="card">
+          <h2><i class="fas fa-envelope"></i> Email Composition</h2>
+          <div class="form-group">
+            <label for="senderName">Sender Name</label>
+            <input type="text" id="senderName" placeholder="Your Name">
+          </div>
+          <div class="form-group">
+            <label for="senderEmail">Sender Email</label>
+            <input type="email" id="senderEmail" placeholder="sender@example.com">
+          </div>
+          <div class="form-group">
+            <label for="emailSubject">Subject</label>
+            <input type="text" id="emailSubject" placeholder="Your Email Subject">
+          </div>
+          <div class="form-group">
+            <label for="emailAttachment">Attachment (Optional)</label>
+            <input type="file" id="emailAttachment">
+          </div>
+          <div class="form-group full-width">
+            <label for="emailBody">Email Body</label>
+            <div class="editor-container">
+              <div class="editor-toolbar">
+                <button class="toolbar-btn" data-command="bold"><i class="fas fa-bold"></i></button>
+                <button class="toolbar-btn" data-command="italic"><i class="fas fa-italic"></i></button>
+                <button class="toolbar-btn" data-command="underline"><i class="fas fa-underline"></i></button>
+                <button class="toolbar-btn" data-command="createLink"><i class="fas fa-link"></i></button>
+                <button class="toolbar-btn" data-command="unlink"><i class="fas fa-unlink"></i></button>
+                <button class="toolbar-btn" data-command="insertImage"><i class="fas fa-image"></i></button>
+                <select class="toolbar-select" data-command="formatBlock">
+                  <option value="p">Paragraph</option>
+                  <option value="h1">Heading 1</option>
+                  <option value="h2">Heading 2</option>
+                  <option value="h3">Heading 3</option>
+                </select>
+                <button class="toolbar-btn" data-command="insertHTML" data-value="{Email}"><i class="fas fa-at"></i> Email</button>
+                <button class="toolbar-btn" data-command="insertHTML" data-value="{Domain}"><i class="fas fa-globe"></i> Domain</button>
+                <button class="toolbar-btn source-btn" data-command="viewSource" title="View/Edit HTML Source"><i class="fas fa-code"></i></button>
+              </div>
+              <div id="emailEditor" contenteditable="true" class="email-editor"></div>
+            </div>
+          </div>
+          <div class="preview-container">
+            <h3>Email Preview</h3>
+            <div id="emailPreview" class="email-preview"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recipients Tab -->
+      <div id="recipients-tab" class="tab-content">
+        <div class="card">
+          <h2><i class="fas fa-users"></i> Email Recipients</h2>
+          <div class="recipient-options">
+            <div class="option-group">
+              <h3>Upload File</h3>
+              <p>Upload a CSV or TXT file with email addresses (one per line or comma-separated)</p>
+              <input type="file" id="recipientFile" accept=".txt,.csv">
+              <button id="uploadRecipients" class="btn secondary">Upload</button>
+            </div>
+            <div class="option-divider">OR</div>
+            <div class="option-group">
+              <h3>Manual Entry</h3>
+              <p>Enter email addresses (one per line or comma-separated)</p>
+              <textarea id="manualRecipients" rows="8" placeholder="email1@example.com,email2@example.com"></textarea>
+              <button id="addManualRecipients" class="btn secondary">Add Recipients</button>
+            </div>
+          </div>
+          <div class="recipient-list-container">
+            <h3>Recipient List <span id="recipientCount">(0)</span></h3>
+            <div class="recipient-controls">
+              <button id="clearRecipients" class="btn danger small">Clear All</button>
+              <button id="filterRecipients" class="btn secondary small">Filter Duplicates</button>
+            </div>
+            <div id="recipientList" class="recipient-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sending Tab -->
+      <div id="sending-tab" class="tab-content">
+        <div class="card">
+          <h2><i class="fas fa-paper-plane"></i> Send Campaign</h2>
+          <div class="campaign-summary">
+            <div class="summary-item">
+              <i class="fas fa-server"></i>
+              <div>
+                <h4>SMTP Servers</h4>
+                <p id="smtpCount">0 configured</p>
+              </div>
+            </div>
+            <div class="summary-item">
+              <i class="fas fa-users"></i>
+              <div>
+                <h4>Recipients</h4>
+                <p id="recipientSummary">0 recipients</p>
+              </div>
+            </div>
+            <div class="summary-item">
+              <i class="fas fa-envelope"></i>
+              <div>
+                <h4>Email</h4>
+                <p id="emailSummary">Not configured</p>
+              </div>
+            </div>
+          </div>
+          <div class="action-buttons">
+            <button id="startSending" class="btn primary large">Start Sending</button>
+          </div>
+          <div id="sendingProgress" class="sending-progress hidden">
+            <div class="progress-header">
+              <h3>Sending Progress</h3>
+              <div class="progress-actions">
+                <button id="pauseResume" class="btn secondary small">Pause</button>
+                <button id="cancelSending" class="btn danger small">Cancel</button>
+              </div>
+            </div>
+            <div class="progress-stats">
+              <div class="stat-item">
+                <div class="stat-label">Total Sent</div>
+                <div id="totalSent" class="stat-value success">0</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Failed</div>
+                <div id="totalFailed" class="stat-value danger">0</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Remaining</div>
+                <div id="totalRemaining" class="stat-value">0</div>
+              </div>
+            </div>
+            <div class="progress-bar-container">
+              <div id="progressBar" class="progress-bar"></div>
+            </div>
+            <div id="statusMessage" class="status-message">Preparing to send emails...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Tab -->
+      <div id="stats-tab" class="tab-content">
+        <div class="card">
+          <h2><i class="fas fa-chart-bar"></i> Campaign Statistics</h2>
+          <div class="stats-container">
+            <div class="stat-card">
+              <div class="stat-icon success"><i class="fas fa-check-circle"></i></div>
+              <div class="stat-info">
+                <h3>Successfully Sent</h3>
+                <div id="statTotalSent" class="stat-number">0</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon danger"><i class="fas fa-times-circle"></i></div>
+              <div class="stat-info">
+                <h3>Failed</h3>
+                <div id="statTotalFailed" class="stat-number">0</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon info"><i class="fas fa-envelope"></i></div>
+              <div class="stat-info">
+                <h3>Total Recipients</h3>
+                <div id="statTotalRecipients" class="stat-number">0</div>
+              </div>
+            </div>
+          </div>
+          <div class="stats-details">
+            <h3>Campaign Details</h3>
+            <table class="stats-table">
+              <tr>
+                <td>Status</td>
+                <td id="campaignStatus">Not started</td>
+              </tr>
+              <tr>
+                <td>Subject</td>
+                <td id="campaignSubject">-</td>
+              </tr>
+              <tr>
+                <td>Sender</td>
+                <td id="campaignSender">-</td>
+              </tr>
+              <tr>
+                <td>SMTP Servers Used</td>
+                <td id="campaignSmtpCount">0</td>
+              </tr>
+            </table>
+          </div>
+          <div class="action-buttons">
+            <button id="resetCampaign" class="btn primary">Reset & Start New Campaign</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>EXE | Sender | All rights reserved | 2025</p>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+      <div class="spinner"></div>
+      <p id="loadingMessage">Processing...</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
